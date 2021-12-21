@@ -44,33 +44,25 @@ class MainActivity : AppCompatActivity() {
     val feedAPI = retrofit.create(FeedAPI::class.java)
     val call = feedAPI.feed
 
-    btnFetch.setOnClickListener(object : View.OnClickListener {
-        override fun onClick(v: View?) {
-
-            call!!.enqueue(object : Callback<Feed?> {
-                override fun onResponse(call: Call<Feed?>, response: Response<Feed?>) {
-                    Log.d(TAG, "onResponse: feed: " + response.body().toString())
-                    Log.d(TAG, "onResponse: Server Response: $response")
-                    val entries = response.body()!!.entrys
-                    for (entry in entries!!) {
-                        feedsList.add(entry.title.toString())
-                        Log.d(TAG, "onResponse: " + feedsList)
-                        rvAdapter.notifyDataSetChanged()
-
-//                        var text = tvTitle.text.toString()
-//                        tvTitle.text = text + "\n" + entry.title
-                    }
+    btnFetch.setOnClickListener {
+        call!!.enqueue(object : Callback<Feed?> {
+            override fun onResponse(call: Call<Feed?>, response: Response<Feed?>) {
+                Log.d(TAG, "onResponse: feed: " + response.body().toString())
+                Log.d(TAG, "onResponse: Server Response: $response")
+                val entries = response.body()!!.entrys
+                for (entry in entries!!) {
+                    feedsList.add(entry.title.toString())
+                    Log.d(TAG, "onResponse: " + feedsList)
+                    rvAdapter.notifyDataSetChanged()
                 }
+            }
 
-                override fun onFailure(call: Call<Feed?>, t: Throwable) {
-                    Log.e(TAG, "onFailure: Unable to retrieve RSS: " + t.message)
-                    Toast.makeText(this@MainActivity, "An Error Occured", Toast.LENGTH_SHORT).show()
-                }
-            })
+            override fun onFailure(call: Call<Feed?>, t: Throwable) {
+                Log.e(TAG, "onFailure: Unable to retrieve RSS: " + t.message)
+                Toast.makeText(this@MainActivity, "An Error Occured", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
-        }
-
-    })
-
-}
+    }
 }
